@@ -24,8 +24,8 @@ function MainApp() {
   };
 
   return (
-    <div className="h-screen w-full bg-slate-950 font-sans text-slate-200 flex flex-col items-center selection:bg-blue-500/30">
-      <div className="w-full max-w-md h-full flex flex-col relative overflow-hidden shadow-2xl border-x border-slate-900/50 bg-slate-950">
+    <div className="h-screen w-full bg-black font-sans text-slate-200 flex flex-col items-center selection:bg-blue-500/30">
+      <div className="w-full max-w-md h-full flex flex-col relative overflow-hidden shadow-2xl border-x border-white/5 bg-slate-950">
         {view === 'dashboard' ? (
           <Dashboard
             onStartEmpty={() => {
