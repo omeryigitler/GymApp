@@ -18,21 +18,34 @@ function MainApp() {
     return <AuthScreen />;
   }
 
+  const closeToDashboard = () => {
+    setActiveRoutine(undefined);
+    setView('dashboard');
+  };
+
   return (
     <div className="h-screen w-full bg-slate-950 font-sans text-slate-200 flex flex-col items-center selection:bg-blue-500/30">
       <div className="w-full max-w-md h-full flex flex-col relative overflow-hidden shadow-2xl border-x border-slate-900/50 bg-slate-950">
         {view === 'dashboard' ? (
           <Dashboard
-            onStartEmpty={() => { setActiveRoutine(undefined); setView('workout'); }}
-            onStartRoutine={(id) => {
-              const r = routines.find(x => x.id === id);
-              setActiveRoutine(r);
+            onStartEmpty={() => {
+              setActiveRoutine(undefined);
               setView('workout');
             }}
-            onCreateRoutine={() => { setActiveRoutine(undefined); setView('routine'); }}
+            onStartRoutine={(id) => {
+              const routine = routines.find(item => item.id === id);
+              if (!routine) return;
+              setActiveRoutine(routine);
+              setView('workout');
+            }}
+            onCreateRoutine={() => {
+              setActiveRoutine(undefined);
+              setView('routine');
+            }}
             onEditRoutine={(id) => {
-              const r = routines.find(x => x.id === id);
-              setActiveRoutine(r);
+              const routine = routines.find(item => item.id === id);
+              if (!routine) return;
+              setActiveRoutine(routine);
               setView('routine');
             }}
             onShowPaywall={() => setShowPaywall(true)}
@@ -41,16 +54,16 @@ function MainApp() {
         ) : view === 'workout' ? (
           <ActiveWorkout
             routine={activeRoutine}
-            onFinish={() => setView('dashboard')}
-            onCancel={() => setView('dashboard')}
+            onFinish={closeToDashboard}
+            onCancel={closeToDashboard}
           />
         ) : view === 'routine' ? (
           <RoutineBuilder
             routineToEdit={activeRoutine}
-            onClose={() => setView('dashboard')}
+            onClose={closeToDashboard}
           />
         ) : view === 'profile' ? (
-          <ProfileView onBack={() => setView('dashboard')} />
+          <ProfileView onBack={closeToDashboard} />
         ) : null}
 
         {showPaywall && (
