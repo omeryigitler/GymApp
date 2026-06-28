@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Dumbbell, Plus, Save, Search, Trash2, X } from 'lucide-react';
+import { Dumbbell, Link2, Plus, Save, Search, Trash2, X } from 'lucide-react';
 import { EXERCISES } from '../data';
 import { Exercise, Routine, RoutineExercise } from '../types';
 import { useAppContext } from '../context/AppContext';
@@ -58,13 +58,15 @@ export function RoutineBuilder({ onClose, routineToEdit }: { onClose: () => void
         exercise,
         targetSets: 3,
         targetReps: '10',
-        restTime: 90
+        targetTime: '',
+        restTime: 90,
+        notes: ''
       }
     ]);
     setError('');
   };
 
-  const updateExercise = (index: number, field: keyof RoutineExercise, value: string | number) => {
+  const updateExerciseField = (index: number, field: keyof RoutineExercise, value: string | number | undefined) => {
     const next = [...exercises];
     next[index] = { ...next[index], [field]: value };
     setExercises(next);
@@ -74,6 +76,24 @@ export function RoutineBuilder({ onClose, routineToEdit }: { onClose: () => void
   const removeExercise = (index: number) => {
     setExercises(prev => prev.filter((_, itemIndex) => itemIndex !== index));
     setError('');
+  };
+
+  const toggleSupersetWithPrevious = (index: number) => {
+    if (index <= 0) return;
+    setExercises(prev => {
+      const next = [...prev];
+      const current = next[index];
+      const previous = next[index - 1];
+      if (current.supersetId && previous.supersetId === current.supersetId) {
+        next[index] = { ...current, supersetId: undefined };
+        next[index - 1] = { ...previous, supersetId: undefined };
+      } else {
+        const supersetId = previous.supersetId || generateId();
+        next[index - 1] = { ...previous, supersetId };
+        next[index] = { ...current, supersetId };
+      }
+      return next;
+    });
   };
 
   const handleSave = () => {
@@ -90,8 +110,10 @@ export function RoutineBuilder({ onClose, routineToEdit }: { onClose: () => void
     const normalizedExercises = exercises.map(item => ({
       ...item,
       targetSets: Math.max(1, Number(item.targetSets) || 1),
-      targetReps: item.targetReps.trim() || '10',
-      restTime: Math.max(0, Number(item.restTime) || 0)
+      targetReps: item.targetReps?.trim() || '10',
+      targetTime: item.targetTime?.trim() || '',
+      restTime: Math.max(0, Number(item.restTime) || 0),
+      notes: item.notes?.trim() || ''
     }));
 
     if (routineToEdit) {
@@ -109,11 +131,11 @@ export function RoutineBuilder({ onClose, routineToEdit }: { onClose: () => void
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-950 relative">
+    <div className="flex flex-col h-full bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.18),_transparent_36%),#020617] relative">
       <div className="sticky top-0 z-10 bg-slate-950/90 p-5 flex items-center justify-between border-b border-slate-900/50 backdrop-blur-xl">
         <div>
           <h2 className="text-xl font-extrabold text-white">{routineToEdit ? 'Rutini Düzenle' : t.createRoutine}</h2>
-          <p className="text-xs text-slate-500 font-semibold mt-1">Egzersizlerini seç, setlerini ayarla ve kaydet.</p>
+          <p className="text-xs text-slate-500 font-semibold mt-1">Set, tekrar, süre, dinlenme, not ve süper setleri ayarla.</p>
         </div>
         <button onClick={onClose} className="p-2 text-slate-400 hover:text-white bg-slate-900 rounded-full transition-colors"><X size={20} /></button>
       </div>
@@ -130,38 +152,19 @@ export function RoutineBuilder({ onClose, routineToEdit }: { onClose: () => void
         <div className="relative overflow-hidden rounded-[28px] border border-blue-500/40 bg-gradient-to-br from-blue-950/45 via-slate-900/90 to-slate-950 p-5 mb-6 shadow-[0_20px_70px_-35px_rgba(37,99,235,0.9)]">
           <div className="absolute -top-16 -right-10 w-44 h-44 bg-blue-500/20 rounded-full blur-3xl" />
           <div className="relative flex items-center gap-4 mb-5">
-            <div className="w-16 h-16 rounded-3xl bg-blue-500/10 border border-blue-500/40 flex items-center justify-center shadow-[0_0_30px_rgba(37,99,235,0.25)]">
-              <Dumbbell className="text-blue-400" size={30} />
-            </div>
-            <div>
-              <h3 className="text-white text-2xl font-black tracking-tight">Egzersiz Ekle</h3>
-              <p className="text-slate-400 text-sm font-medium mt-1">Rutininize eklemek istediğiniz egzersizi seçin.</p>
-            </div>
+            <div className="w-16 h-16 rounded-3xl bg-blue-500/10 border border-blue-500/40 flex items-center justify-center shadow-[0_0_30px_rgba(37,99,235,0.25)]"><Dumbbell className="text-blue-400" size={30} /></div>
+            <div><h3 className="text-white text-2xl font-black tracking-tight">Egzersiz Ekle</h3><p className="text-slate-400 text-sm font-medium mt-1">Rutininize eklemek istediğiniz egzersizi seçin.</p></div>
           </div>
 
           <div className="relative mb-4">
             <Search size={19} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
-            <input
-              type="text"
-              value={query}
-              onChange={event => setQuery(event.target.value)}
-              placeholder="Egzersiz ara..."
-              className="w-full bg-slate-950/60 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-semibold placeholder:text-slate-600 focus:outline-none focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 transition-all"
-            />
+            <input type="text" value={query} onChange={event => setQuery(event.target.value)} placeholder="Egzersiz ara..." className="w-full bg-slate-950/60 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-semibold placeholder:text-slate-600 focus:outline-none focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 transition-all" />
           </div>
 
           <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1 mb-5">
             {muscleFilters.map(filter => {
               const isActive = selectedMuscle === filter;
-              return (
-                <button
-                  key={filter}
-                  onClick={() => setSelectedMuscle(filter)}
-                  className={isActive ? 'shrink-0 px-4 py-2 rounded-full text-xs font-extrabold bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'shrink-0 px-4 py-2 rounded-full text-xs font-extrabold bg-slate-950/60 text-slate-400 border border-white/10 hover:text-white hover:border-blue-500/40'}
-                >
-                  {filter === 'all' ? 'Tümü' : filter}
-                </button>
-              );
+              return <button key={filter} onClick={() => setSelectedMuscle(filter)} className={isActive ? 'shrink-0 px-4 py-2 rounded-full text-xs font-extrabold bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'shrink-0 px-4 py-2 rounded-full text-xs font-extrabold bg-slate-950/60 text-slate-400 border border-white/10 hover:text-white hover:border-blue-500/40'}>{filter === 'all' ? 'Tümü' : filter}</button>;
             })}
           </div>
 
@@ -169,38 +172,18 @@ export function RoutineBuilder({ onClose, routineToEdit }: { onClose: () => void
             {filteredExercises.map(exercise => {
               const muscle = exercise.muscle[lang];
               return (
-                <button
-                  key={exercise.id}
-                  onClick={() => addExercise(exercise)}
-                  className="w-full group bg-slate-950/45 hover:bg-slate-900/95 border border-white/10 hover:border-blue-500/50 rounded-3xl p-3.5 flex items-center gap-3 text-left transition-all active:scale-[0.99]"
-                >
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${muscleTone(muscle)} border flex items-center justify-center shrink-0`}>
-                    <Dumbbell size={24} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-white font-extrabold text-[15px] truncate">{exercise.name[lang]}</h4>
-                    <span className={`inline-flex mt-2 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-gradient-to-r ${muscleTone(muscle)} border`}>
-                      {muscle}
-                    </span>
-                  </div>
-                  <div className="w-11 h-11 rounded-2xl border border-blue-500/50 bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-[0_0_24px_rgba(37,99,235,0.18)]">
-                    <Plus size={22} />
-                  </div>
+                <button key={exercise.id} onClick={() => addExercise(exercise)} className="w-full group bg-slate-950/45 hover:bg-slate-900/95 border border-white/10 hover:border-blue-500/50 rounded-3xl p-3.5 flex items-center gap-3 text-left transition-all active:scale-[0.99]">
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${muscleTone(muscle)} border flex items-center justify-center shrink-0`}><Dumbbell size={24} /></div>
+                  <div className="min-w-0 flex-1"><h4 className="text-white font-extrabold text-[15px] truncate">{exercise.name[lang]}</h4><span className={`inline-flex mt-2 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-gradient-to-r ${muscleTone(muscle)} border`}>{muscle}</span></div>
+                  <div className="w-11 h-11 rounded-2xl border border-blue-500/50 bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-all"><Plus size={22} /></div>
                 </button>
               );
             })}
-            {filteredExercises.length === 0 && (
-              <div className="rounded-3xl border border-dashed border-white/10 p-8 text-center text-slate-500 text-sm font-semibold">
-                Aramanıza uygun egzersiz bulunamadı.
-              </div>
-            )}
           </div>
         </div>
 
         {exercises.length === 0 ? (
-          <div className="border-2 border-dashed border-white/10 rounded-3xl p-8 text-center text-slate-500 text-sm font-semibold mb-4">
-            Rutine en az bir egzersiz ekle.
-          </div>
+          <div className="border-2 border-dashed border-white/10 rounded-3xl p-8 text-center text-slate-500 text-sm font-semibold mb-4">Rutine en az bir egzersiz ekle.</div>
         ) : (
           <div className="space-y-4 mb-4">
             <h3 className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest pl-2">Rutindeki Egzersizler</h3>
@@ -210,32 +193,22 @@ export function RoutineBuilder({ onClose, routineToEdit }: { onClose: () => void
                 <div key={item.id} className="bg-slate-900/90 border border-slate-800 p-5 rounded-3xl shadow-sm">
                   <div className="flex justify-between gap-4 mb-5">
                     <div className="flex gap-3 min-w-0">
-                      <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${muscleTone(muscle)} border flex items-center justify-center shrink-0`}>
-                        <Dumbbell size={21} />
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="text-white font-extrabold text-base truncate">{item.exercise.name[lang]}</h3>
-                        <p className="text-xs text-blue-400 uppercase tracking-widest font-bold mt-1">{muscle}</p>
-                      </div>
+                      <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${muscleTone(muscle)} border flex items-center justify-center shrink-0`}><Dumbbell size={21} /></div>
+                      <div className="min-w-0"><h3 className="text-white font-extrabold text-base truncate">{item.exercise.name[lang]}</h3><p className="text-xs text-blue-400 uppercase tracking-widest font-bold mt-1">{muscle} {item.supersetId ? '• SUPERSET' : ''}</p></div>
                     </div>
-                    <button onClick={() => removeExercise(index)} className="text-slate-500 hover:text-red-400 w-9 h-9 rounded-xl hover:bg-red-500/10 flex items-center justify-center shrink-0">
-                      <Trash2 size={17} />
-                    </button>
+                    <button onClick={() => removeExercise(index)} className="text-slate-500 hover:text-red-400 w-9 h-9 rounded-xl hover:bg-red-500/10 flex items-center justify-center shrink-0"><Trash2 size={17} /></button>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2">
-                    <label className="bg-slate-950/50 rounded-2xl p-2 border border-slate-800/50 text-center">
-                      <span className="text-[9px] font-bold text-slate-500 uppercase block mb-1.5">{t.sets}</span>
-                      <input type="number" min="1" value={item.targetSets} onChange={event => updateExercise(index, 'targetSets', parseInt(event.target.value, 10) || 1)} className="w-full bg-slate-900 border border-slate-800 rounded-lg py-1.5 text-white font-bold text-center focus:outline-none" />
-                    </label>
-                    <label className="bg-slate-950/50 rounded-2xl p-2 border border-slate-800/50 text-center">
-                      <span className="text-[9px] font-bold text-slate-500 uppercase block mb-1.5">{t.reps}</span>
-                      <input type="text" value={item.targetReps} onChange={event => updateExercise(index, 'targetReps', event.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-lg py-1.5 text-white font-bold text-center focus:outline-none" />
-                    </label>
-                    <label className="bg-slate-950/50 rounded-2xl p-2 border border-slate-800/50 text-center">
-                      <span className="text-[9px] font-bold text-slate-500 uppercase block mb-1.5">{t.rest}</span>
-                      <input type="number" min="0" value={item.restTime} onChange={event => updateExercise(index, 'restTime', parseInt(event.target.value, 10) || 0)} className="w-full bg-slate-900 border border-slate-800 rounded-lg py-1.5 text-white font-bold text-center focus:outline-none" />
-                    </label>
+                  <div className="grid grid-cols-4 gap-2 mb-3">
+                    <label className="bg-slate-950/50 rounded-2xl p-2 border border-slate-800/50 text-center"><span className="text-[9px] font-bold text-slate-500 uppercase block mb-1.5">{t.sets}</span><input type="number" min="1" value={item.targetSets} onChange={event => updateExerciseField(index, 'targetSets', parseInt(event.target.value, 10) || 1)} className="w-full bg-slate-900 border border-slate-800 rounded-lg py-1.5 text-white font-bold text-center focus:outline-none" /></label>
+                    <label className="bg-slate-950/50 rounded-2xl p-2 border border-slate-800/50 text-center"><span className="text-[9px] font-bold text-slate-500 uppercase block mb-1.5">{t.reps}</span><input type="text" value={item.targetReps} onChange={event => updateExerciseField(index, 'targetReps', event.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-lg py-1.5 text-white font-bold text-center focus:outline-none" /></label>
+                    <label className="bg-slate-950/50 rounded-2xl p-2 border border-slate-800/50 text-center"><span className="text-[9px] font-bold text-slate-500 uppercase block mb-1.5">Süre</span><input type="text" value={item.targetTime || ''} onChange={event => updateExerciseField(index, 'targetTime', event.target.value)} placeholder="sn" className="w-full bg-slate-900 border border-slate-800 rounded-lg py-1.5 text-white font-bold text-center focus:outline-none" /></label>
+                    <label className="bg-slate-950/50 rounded-2xl p-2 border border-slate-800/50 text-center"><span className="text-[9px] font-bold text-slate-500 uppercase block mb-1.5">{t.rest}</span><input type="number" min="0" value={item.restTime} onChange={event => updateExerciseField(index, 'restTime', parseInt(event.target.value, 10) || 0)} className="w-full bg-slate-900 border border-slate-800 rounded-lg py-1.5 text-white font-bold text-center focus:outline-none" /></label>
+                  </div>
+
+                  <div className="grid grid-cols-[1fr_auto] gap-2">
+                    <textarea value={item.notes || ''} onChange={event => updateExerciseField(index, 'notes', event.target.value)} placeholder="Egzersiz notu..." className="bg-slate-950/50 border border-slate-800 rounded-2xl p-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/70 resize-none" rows={2} />
+                    <button disabled={index === 0} onClick={() => toggleSupersetWithPrevious(index)} className={item.supersetId ? 'px-3 rounded-2xl bg-violet-500/15 border border-violet-500/30 text-violet-300 font-black text-xs' : 'px-3 rounded-2xl bg-slate-950/50 border border-white/10 text-slate-500 font-black text-xs disabled:opacity-40'}><Link2 size={16} className="mx-auto mb-1" />Süper</button>
                   </div>
                 </div>
               );
@@ -246,9 +219,7 @@ export function RoutineBuilder({ onClose, routineToEdit }: { onClose: () => void
 
       <div className="fixed bottom-0 left-0 right-0 p-5 bg-slate-950/95 backdrop-blur-xl max-w-md mx-auto border-x border-slate-900/50">
         {error && <div className="mb-3 text-red-400 text-sm font-bold text-center bg-red-400/10 py-2 px-4 rounded-xl border border-red-400/20">{error}</div>}
-        <button onClick={handleSave} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-4 rounded-2xl transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98] flex items-center justify-center gap-2">
-          <Save size={20} /> {t.save}
-        </button>
+        <button onClick={handleSave} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-4 rounded-2xl transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98] flex items-center justify-center gap-2"><Save size={20} /> {t.save}</button>
       </div>
     </div>
   );
