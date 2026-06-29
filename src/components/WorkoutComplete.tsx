@@ -1,4 +1,5 @@
-import { ArrowRight, BarChart3, Flame, Home, Share2, Timer, Trophy, Zap } from 'lucide-react';
+import { type ReactNode } from 'react';
+import { BarChart3, Flame, Home, Share2, Timer, Trophy, Zap } from 'lucide-react';
 import { Workout } from '../types';
 import { formatTime } from '../utils';
 
@@ -74,6 +75,6 @@ function getAverageRpe(workout: Workout) {
   return Math.round((rpes.reduce((sum, rpe) => sum + rpe, 0) / rpes.length) * 10) / 10;
 }
 
-function ResultCard({ icon, label, value, accent = 'text-white' }: { icon: React.ReactNode; label: string; value: string }) {
+function ResultCard({ icon, label, value, accent = 'text-white' }: { icon: ReactNode; label: string; value: string; accent?: string }) {
   return <div className="bg-[#1C1C1E] border border-white/10 rounded-2xl p-4"><div className="flex items-center gap-2 text-[#c4c9ac] text-xs font-black uppercase tracking-widest mb-4">{icon} {label}</div><p className={`font-display text-2xl font-black tracking-[-0.04em] ${accent}`}>{value}</p></div>;
 }
