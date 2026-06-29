@@ -14,6 +14,16 @@ export function WorkoutComplete({ workout, onBack }: { workout: Workout; onBack:
   const averageRpe = getAverageRpe(workout);
   const intensityBars = [32, 56, 42, 78, 112, 92, 66, 44];
 
+  const shareProgress = async () => {
+    const text = `FLOW STATE: ${workout.name} tamamlandı. Süre: ${formatTime(durationSeconds)}, set: ${completedSets}, hacim: ${Math.round(totalVolume).toLocaleString('tr-TR')} kg.`;
+    try {
+      if (navigator.share) await navigator.share({ title: 'FLOW STATE Workout', text });
+      else if (navigator.clipboard) await navigator.clipboard.writeText(text);
+    } catch {
+      // User cancelled native share or clipboard is unavailable.
+    }
+  };
+
   return (
     <div className="flex-1 flex flex-col bg-[#131313] text-[#e5e2e1] h-full overflow-hidden">
       <header className="h-16 shrink-0 bg-[#131313]/85 backdrop-blur-2xl border-b border-white/10 flex items-center justify-between px-5">
@@ -63,7 +73,7 @@ export function WorkoutComplete({ workout, onBack }: { workout: Workout; onBack:
 
       <div className="shrink-0 p-5 bg-[#131313]/95 backdrop-blur-2xl border-t border-white/10 pb-safe space-y-3">
         <button onClick={onBack} className="w-full h-14 rounded-full bg-[#CCFF00] text-[#131313] font-black kinetic-glow-lime active:scale-[0.98]">PANELE DÖN</button>
-        <button className="w-full h-14 rounded-full bg-transparent border border-white/10 text-white font-black flex items-center justify-center gap-2 active:scale-[0.98]"><Share2 size={18} /> İLERLEMEYİ PAYLAŞ</button>
+        <button onClick={shareProgress} className="w-full h-14 rounded-full bg-transparent border border-white/10 text-white font-black flex items-center justify-center gap-2 active:scale-[0.98]"><Share2 size={18} /> İLERLEMEYİ PAYLAŞ</button>
       </div>
     </div>
   );
