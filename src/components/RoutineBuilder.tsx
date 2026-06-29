@@ -175,17 +175,21 @@ export function RoutineBuilder({ onClose, routineToEdit }: { onClose: () => void
           })}
         </div>
 
-        <button type="button" onClick={() => setShowPicker(true)} className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black flex items-center justify-center gap-2 hover:from-blue-500 hover:to-indigo-500 transition-colors shadow-lg shadow-blue-600/20 active:scale-[0.98]">
-          <Plus size={20} /> {t.addExercise}
-        </button>
+        {!showPicker && (
+          <button type="button" onClick={() => setShowPicker(true)} className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black flex items-center justify-center gap-2 hover:from-blue-500 hover:to-indigo-500 transition-colors shadow-lg shadow-blue-600/20 active:scale-[0.98]">
+            <Plus size={20} /> {t.addExercise}
+          </button>
+        )}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 p-5 bg-slate-950/95 backdrop-blur-xl max-w-md mx-auto border-x border-slate-900/50">
-        {error && <div className="mb-3 text-red-400 text-sm font-bold text-center bg-red-400/10 py-2 px-4 rounded-xl border border-red-400/20">{error}</div>}
-        <button type="button" onClick={handleSave} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98] flex items-center justify-center gap-2">
-          <Save size={20} /> {t.save}
-        </button>
-      </div>
+      {!showPicker && (
+        <div className="fixed bottom-0 left-0 right-0 p-5 bg-slate-950/95 backdrop-blur-xl max-w-md mx-auto border-x border-slate-900/50">
+          {error && <div className="mb-3 text-red-400 text-sm font-bold text-center bg-red-400/10 py-2 px-4 rounded-xl border border-red-400/20">{error}</div>}
+          <button type="button" onClick={handleSave} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98] flex items-center justify-center gap-2">
+            <Save size={20} /> {t.save}
+          </button>
+        </div>
+      )}
 
       {showPicker && <ExercisePicker onPick={handleAddExercise} onClose={() => setShowPicker(false)} />}
     </div>
