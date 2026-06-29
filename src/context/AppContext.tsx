@@ -2,6 +2,14 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import { Language, Measurement, Routine, User, Workout } from '../types';
 
 type WaterLog = Record<string, number>;
+type WaterReminderFrequency = 'hourly' | 'twoHours' | 'threeHours';
+
+interface WaterReminderSettings {
+  enabled: boolean;
+  frequency: WaterReminderFrequency;
+  startTime: string;
+  endTime: string;
+}
 
 interface AppState {
   workouts: Workout[];
@@ -13,6 +21,8 @@ interface AppState {
   waterLog: WaterLog;
   waterGoal: number;
   hydrationToday: number;
+  waterReminder: WaterReminderSettings;
+  setWaterReminder: (settings: WaterReminderSettings) => void;
   addWater: () => void;
   removeWater: () => void;
   setWaterGoal: (goal: number) => void;
@@ -30,8 +40,8 @@ interface AppState {
 }
 
 const AppContext = createContext<AppState | null>(null);
-
 const todayKey = () => new Date().toISOString().slice(0, 10);
+const defaultWaterReminder: WaterReminderSettings = { enabled: true, frequency: 'twoHours', startTime: '08:00', endTime: '22:00' };
 
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
@@ -42,6 +52,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [lang, setLang] = useState<Language>('tr');
   const [waterLog, setWaterLog] = useState<WaterLog>({});
   const [waterGoal, setHydrationGoal] = useState(8);
+  const [waterReminder, setWaterReminder] = useState<WaterReminderSettings>(defaultWaterReminder);
   const [loaded, setLoaded] = useState(false);
 
   const hydrationToday = useMemo(() => waterLog[todayKey()] || 0, [waterLog]);
@@ -59,6 +70,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         setLang(parsed.lang || 'tr');
         setWaterLog(parsed.waterLog || {});
         setHydrationGoal(parsed.waterGoal || 8);
+        setWaterReminder(parsed.waterReminder || defaultWaterReminder);
       } catch (e) {
         console.error('Failed to load data', e);
       }
@@ -68,9 +80,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (loaded) {
-      localStorage.setItem('lifttrack_data_v2', JSON.stringify({ workouts, routines, measurements, isPremium, user, lang, waterLog, waterGoal }));
+      localStorage.setItem('lifttrack_data_v2', JSON.stringify({ workouts, routines, measurements, isPremium, user, lang, waterLog, waterGoal, waterReminder }));
     }
-  }, [workouts, routines, measurements, isPremium, user, lang, waterLog, waterGoal, loaded]);
+  }, [workouts, routines, measurements, isPremium, user, lang, waterLog, waterGoal, waterReminder, loaded]);
 
   const addWater = () => setWaterLog(prev => ({ ...prev, [todayKey()]: Math.min((prev[todayKey()] || 0) + 1, 30) }));
   const removeWater = () => setWaterLog(prev => ({ ...prev, [todayKey()]: Math.max((prev[todayKey()] || 0) - 1, 0) }));
@@ -93,7 +105,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   if (!loaded) return null;
 
   return (
-    <AppContext.Provider value={{ workouts, routines, measurements, isPremium, user, lang, waterLog, waterGoal, hydrationToday, addWater, removeWater, setWaterGoal, addWorkout, deleteWorkout, addRoutine, updateRoutine, deleteRoutine, addMeasurement, deleteMeasurement, setPremium, login, logout, setLang }}>
+    <AppContext.Provider value={{ workouts, routines, measurements, isPremium, user, lang, waterLog, waterGoal, hydrationToday, waterReminder, setWaterReminder, addWater, removeWater, setWaterGoal, addWorkout, deleteWorkout, addRoutine, updateRoutine, deleteRoutine, addMeasurement, deleteMeasurement, setPremium, login, logout, setLang }}>
       {children}
     </AppContext.Provider>
   );
