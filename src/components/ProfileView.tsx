@@ -184,7 +184,7 @@ function makeWeeklyBars(workouts: { startTime: number; exercises: { sets: { comp
 }
 
 function ProfileStat({ label, value, highlight = false }: { label: string; value: string; highlight?: boolean }) {
-  return <div><span className={`block font-display text-sm font-black ${highlight ? 'text-[#CCFF00]' : 'text-white/90'}`}>{value}</span><span className="block text-[#bdc1a7] text-xs tracking-wider mt-1">{label}</span></div>;
+  return <div><span className={`block font-display text-sm font-black ${highlight ? 'text-[#CCFF00]' : 'text-[#171717]'}`}>{value}</span><span className="block text-[#bdc1a7] text-xs tracking-wider mt-1">{label}</span></div>;
 }
 
 function ReminderButton({ children, active, lime = false, onClick }: { children: string; active: boolean; lime?: boolean; onClick: () => void }) {
