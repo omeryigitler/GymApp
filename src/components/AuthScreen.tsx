@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Dumbbell, Sparkles } from 'lucide-react';
+import { Bell, Dumbbell, Flame, Lock, Mail, User, Zap } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { translations } from '../i18n';
 import { cn } from '../utils';
@@ -10,51 +10,84 @@ export function AuthScreen() {
   const [isLogin, setIsLogin] = useState(true);
 
   return (
-    <div className="min-h-screen w-full bg-black flex flex-col items-center selection:bg-blue-500/30">
-      <div className="w-full max-w-md min-h-screen bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.24),_transparent_36%),#020617] flex flex-col items-center justify-center p-6 relative overflow-hidden shadow-2xl border-x border-slate-900/50">
-        <div className="absolute top-0 right-0 w-[420px] h-[420px] bg-blue-600/15 rounded-full blur-[100px] pointer-events-none translate-x-1/3 -translate-y-1/3" />
-        <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-indigo-500/15 rounded-full blur-[100px] pointer-events-none -translate-x-1/3 translate-y-1/3" />
+    <div className="min-h-screen w-full bg-black flex justify-center text-[#e5e2e1] selection:bg-[#CCFF00]/30">
+      <div className="w-full max-w-md min-h-screen bg-[#131313] relative overflow-hidden border-x border-white/10">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_8%,rgba(204,255,0,0.16),transparent_28%),radial-gradient(circle_at_80%_70%,rgba(0,112,243,0.12),transparent_34%)]" />
 
-        <div className="absolute top-6 right-6 flex gap-2 z-20 bg-slate-950/50 border border-white/10 p-1 rounded-full backdrop-blur-xl">
-          <button onClick={() => setLang('tr')} className={cn('px-3 py-1.5 text-xs font-black rounded-full transition-colors', lang === 'tr' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'text-slate-500 hover:text-slate-300')}>TR</button>
-          <button onClick={() => setLang('en')} className={cn('px-3 py-1.5 text-xs font-black rounded-full transition-colors', lang === 'en' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'text-slate-500 hover:text-slate-300')}>EN</button>
-        </div>
+        <header className="relative z-10 h-16 bg-[#131313]/85 backdrop-blur-2xl border-b border-white/10 flex items-center justify-between px-5">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-[#1C1C1E] border border-[#CCFF00]/30 flex items-center justify-center text-[#CCFF00] shadow-[0_0_14px_rgba(204,255,0,0.24)]">
+              <User size={18} fill="currentColor" />
+            </div>
+            <span className="font-display text-[24px] font-black italic tracking-[-0.08em] text-[#CCFF00]">FLOW STATE</span>
+          </div>
+          <Bell size={21} className="text-[#CCFF00]" />
+        </header>
 
-        <div className="w-full relative z-10 flex flex-col items-center">
-          <div className="flex flex-col items-center mb-8 text-center">
-            <div className="relative mb-6">
-              <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-50 rounded-[28px]" />
-              <div className="relative w-24 h-24 bg-gradient-to-br from-blue-500 via-indigo-600 to-blue-800 rounded-[28px] flex items-center justify-center shadow-2xl border border-white/20">
-                <Dumbbell className="text-white" size={42} />
-              </div>
+        <div className="relative z-10 px-5 pt-8 pb-10 min-h-[calc(100vh-64px)] flex flex-col">
+          <div className="flex justify-end mb-8">
+            <div className="flex gap-1 bg-[#1C1C1E] border border-white/10 p-1 rounded-full">
+              <button type="button" onClick={() => setLang('tr')} className={cn('px-3 py-1.5 text-xs font-black rounded-full transition-all', lang === 'tr' ? 'bg-[#CCFF00] text-[#131313] shadow-[0_0_14px_rgba(204,255,0,0.28)]' : 'text-[#c4c9ac] hover:text-white')}>TR</button>
+              <button type="button" onClick={() => setLang('en')} className={cn('px-3 py-1.5 text-xs font-black rounded-full transition-all', lang === 'en' ? 'bg-[#CCFF00] text-[#131313] shadow-[0_0_14px_rgba(204,255,0,0.28)]' : 'text-[#c4c9ac] hover:text-white')}>EN</button>
             </div>
-            <div className="inline-flex items-center gap-2 text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest mb-4">
-              <Sparkles size={12} /> Premium Workout Tracker
-            </div>
-            <h1 className="text-5xl font-black text-white tracking-tight">{t.appTitle}</h1>
-            <p className="text-slate-400 text-sm mt-3 font-semibold">Antrenmanlarını takip et, rutinlerini oluştur, gelişimini gör.</p>
           </div>
 
-          <div className="w-full relative overflow-hidden bg-gradient-to-br from-slate-900/95 to-slate-950 border border-white/10 rounded-[32px] p-5 shadow-[0_25px_80px_-45px_rgba(37,99,235,0.9)]">
-            <div className="absolute -top-16 -right-16 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl" />
-            <div className="relative flex bg-slate-950/70 p-1.5 rounded-2xl mb-6 border border-white/10 backdrop-blur-md">
-              <button onClick={() => setIsLogin(true)} className={cn('flex-1 py-3 text-sm font-black rounded-xl transition-colors', isLogin ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'text-slate-400 hover:text-slate-200')}>{t.login}</button>
-              <button onClick={() => setIsLogin(false)} className={cn('flex-1 py-3 text-sm font-black rounded-xl transition-colors', !isLogin ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'text-slate-400 hover:text-slate-200')}>{t.register}</button>
+          <section className="mb-8">
+            <div className="w-24 h-24 mx-auto rounded-full bg-[#1C1C1E] border border-[#CCFF00] flex items-center justify-center text-[#CCFF00] shadow-[0_0_32px_rgba(204,255,0,0.26)] mb-7">
+              <Flame size={46} fill="currentColor" />
+            </div>
+            <p className="text-center text-[#CCFF00] text-xs font-black uppercase tracking-[0.24em] mb-3">Premium Fitness System</p>
+            <h1 className="font-display text-[46px] leading-[48px] font-black text-white tracking-[-0.08em] text-center uppercase">Enter Your Flow</h1>
+            <p className="text-center text-[#c4c9ac] text-base font-medium mt-4 leading-6">Antrenmanlarını takip et, rutinlerini oluştur, gelişimini gör.</p>
+          </section>
+
+          <section className="bg-[#1C1C1E] border border-white/10 rounded-[28px] p-5 shadow-[0_20px_80px_-55px_rgba(204,255,0,0.8)]">
+            <div className="grid grid-cols-2 gap-2 bg-[#131313] border border-white/10 p-1 rounded-full mb-6">
+              <button type="button" onClick={() => setIsLogin(true)} className={cn('py-3 rounded-full text-sm font-black transition-all', isLogin ? 'bg-[#CCFF00] text-[#131313] shadow-[0_0_18px_rgba(204,255,0,0.3)]' : 'text-[#c4c9ac] hover:text-white')}>{t.login}</button>
+              <button type="button" onClick={() => setIsLogin(false)} className={cn('py-3 rounded-full text-sm font-black transition-all', !isLogin ? 'bg-[#CCFF00] text-[#131313] shadow-[0_0_18px_rgba(204,255,0,0.3)]' : 'text-[#c4c9ac] hover:text-white')}>{t.register}</button>
             </div>
 
-            <div className="relative w-full flex flex-col space-y-4">
-              {!isLogin && <input type="text" placeholder={t.name} className="w-full bg-slate-950/60 border border-white/10 text-white rounded-2xl py-4 px-5 focus:outline-none focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder-slate-600 font-semibold" />}
-              <input type="email" placeholder={t.email} className="w-full bg-slate-950/60 border border-white/10 text-white rounded-2xl py-4 px-5 focus:outline-none focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder-slate-600 font-semibold" />
-              <input type="password" placeholder={t.password} className="w-full bg-slate-950/60 border border-white/10 text-white rounded-2xl py-4 px-5 focus:outline-none focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder-slate-600 font-semibold" />
-              {isLogin && <div className="flex justify-end pt-1"><span className="text-sm text-blue-400 font-bold">{t.forgotPassword}</span></div>}
-              <button onClick={login} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-blue-600/25 active:scale-[0.98] mt-2">
-                {isLogin ? t.login : t.register}
+            <div className="space-y-3">
+              {!isLogin && <Field icon={<User size={18} />} placeholder={t.name} type="text" />}
+              <Field icon={<Mail size={18} />} placeholder={t.email} type="email" />
+              <Field icon={<Lock size={18} />} placeholder={t.password} type="password" />
+
+              {isLogin && <button type="button" className="w-full text-right text-[#0070F3] text-sm font-black pt-1">{t.forgotPassword}</button>}
+
+              <button type="button" onClick={login} className="w-full mt-3 bg-[#CCFF00] hover:bg-[#abd600] text-[#131313] font-black py-4 rounded-full transition-all shadow-[0_0_24px_rgba(204,255,0,0.28)] active:scale-[0.98] flex items-center justify-center gap-2">
+                <Zap size={19} fill="currentColor" /> {isLogin ? t.login : t.register}
               </button>
-              <p className="text-center text-xs text-slate-500 font-semibold">Demo MVP: gerçek auth henüz bağlı değil.</p>
             </div>
+          </section>
+
+          <div className="mt-7 grid grid-cols-3 gap-3">
+            <MiniMetric icon={<Dumbbell size={17} />} label="Routines" value="Build" />
+            <MiniMetric icon={<Flame size={17} />} label="Streak" value="Flow" />
+            <MiniMetric icon={<Zap size={17} />} label="Progress" value="Track" />
           </div>
+
+          <p className="mt-auto pt-8 text-center text-xs text-[#8e9379] font-semibold">Demo MVP: gerçek auth henüz bağlı değil.</p>
         </div>
       </div>
+    </div>
+  );
+}
+
+function Field({ icon, placeholder, type }: { icon: React.ReactNode; placeholder: string; type: string }) {
+  return (
+    <label className="flex items-center gap-3 bg-[#201f1f] border border-white/10 rounded-2xl px-4 py-4 focus-within:border-[#CCFF00] transition-colors">
+      <span className="text-[#CCFF00]">{icon}</span>
+      <input type={type} placeholder={placeholder} className="min-w-0 flex-1 bg-transparent text-white placeholder:text-[#8e9379] font-semibold outline-none" />
+    </label>
+  );
+}
+
+function MiniMetric({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="bg-[#1C1C1E] border border-white/10 rounded-2xl p-3">
+      <div className="text-[#CCFF00] mb-2">{icon}</div>
+      <p className="text-white text-sm font-black leading-none">{value}</p>
+      <p className="text-[#c4c9ac] text-[10px] font-black uppercase tracking-widest mt-1">{label}</p>
     </div>
   );
 }
