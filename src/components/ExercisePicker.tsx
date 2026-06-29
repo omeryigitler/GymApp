@@ -29,40 +29,40 @@ export function ExercisePicker({ onPick, onClose }: { onPick: (ex: Exercise) => 
   }, [filtered, lang]);
 
   return (
-    <div className="fixed inset-0 z-[9999] w-full h-dvh max-w-md mx-auto isolate overflow-hidden bg-slate-950 border-x border-white/5 animate-in slide-in-from-bottom-full duration-300">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.20),_transparent_36%),#020617]" />
+    <div className="fixed inset-0 z-[9999] w-full h-dvh max-w-md mx-auto isolate overflow-hidden bg-[#131313] border-x border-white/10 animate-in slide-in-from-bottom-full duration-300">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(204,255,0,0.10),_transparent_34%),#131313]" />
 
       <div className="relative z-10 flex h-full flex-col">
-        <div className="flex items-center justify-between p-5 border-b border-white/5 bg-slate-950/95 backdrop-blur-2xl">
+        <div className="flex items-center justify-between p-5 border-b border-white/10 bg-[#131313]/95 backdrop-blur-2xl">
           <div>
-            <h2 className="text-xl font-black text-white tracking-tight">{t.addExercise}</h2>
-            <p className="text-xs text-slate-500 font-semibold mt-1">{filtered.length} sonuç • toplam {EXERCISES.length} egzersiz</p>
+            <h2 className="font-display text-xl font-black text-white tracking-[-0.04em]">{t.addExercise}</h2>
+            <p className="text-xs text-[#c4c9ac] font-semibold mt-1">{filtered.length} sonuç • toplam {EXERCISES.length} egzersiz</p>
           </div>
-          <button type="button" onClick={onClose} className="p-2 bg-slate-900 border border-white/10 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+          <button type="button" onClick={onClose} className="p-2 bg-[#1C1C1E] border border-white/10 rounded-full text-[#c4c9ac] hover:text-white hover:bg-[#2a2a2a] transition-colors">
             <X size={20} />
           </button>
         </div>
 
-        <div className="p-5 bg-slate-950/80">
+        <div className="p-5 bg-[#131313]/90">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={18} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8e9379] pointer-events-none" size={18} />
             <input
               autoFocus
               type="text"
               placeholder={t.searchEx}
               value={query}
               onChange={event => setQuery(event.target.value)}
-              className="w-full bg-slate-950 border border-blue-500/30 text-white rounded-2xl py-4 pl-11 pr-4 focus:outline-none focus:border-blue-500 transition-colors placeholder-slate-500 font-semibold"
+              className="w-full bg-[#1C1C1E] border border-white/10 text-white rounded-2xl py-4 pl-11 pr-4 focus:outline-none focus:border-[#CCFF00] transition-colors placeholder-[#8e9379] font-semibold"
             />
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-5 space-y-6 pt-0 hide-scrollbar bg-slate-950/95">
+        <div className="flex-1 overflow-y-auto p-5 space-y-6 pt-0 hide-scrollbar bg-[#131313]/95">
           {groups.map(([muscle, items]) => (
             <div key={muscle} className="space-y-2">
               <div className="flex items-center justify-between px-1">
-                <h3 className="text-[11px] font-black text-blue-400 uppercase tracking-widest">{muscle}</h3>
-                <span className="text-[10px] font-black text-slate-500 bg-white/5 border border-white/10 rounded-full px-2 py-0.5">{items.length}</span>
+                <h3 className="text-[11px] font-black text-[#CCFF00] uppercase tracking-widest">{muscle}</h3>
+                <span className="text-[10px] font-black text-[#c4c9ac] bg-white/5 border border-white/10 rounded-full px-2 py-0.5">{items.length}</span>
               </div>
               <div className="space-y-2">
                 {items.map(exercise => (
@@ -70,22 +70,22 @@ export function ExercisePicker({ onPick, onClose }: { onPick: (ex: Exercise) => 
                     type="button"
                     key={exercise.id}
                     onClick={() => onPick(exercise)}
-                    className="w-full flex items-center justify-between bg-gradient-to-br from-slate-900/95 to-slate-950 p-4 rounded-2xl border border-white/10 hover:border-blue-500/50 hover:bg-slate-900 transition-all text-left active:scale-[0.99]"
+                    className="w-full flex items-center justify-between bg-[#1C1C1E] p-4 rounded-2xl border border-white/10 hover:border-[#CCFF00]/50 transition-all text-left active:scale-[0.99]"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-11 h-11 rounded-2xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-center text-blue-400 shrink-0"><Dumbbell size={20} /></div>
+                      <div className="w-11 h-11 rounded-2xl bg-[#CCFF00]/10 border border-[#CCFF00]/25 flex items-center justify-center text-[#CCFF00] shrink-0"><Dumbbell size={20} /></div>
                       <div className="min-w-0">
-                        <div className="text-white font-black text-sm mb-0.5 truncate">{exercise.name[lang]}</div>
-                        <div className="text-[11px] text-slate-500 font-semibold">{exercise.muscle[lang]}</div>
+                        <div className="font-display text-white font-black text-sm mb-0.5 truncate tracking-[-0.03em]">{exercise.name[lang]}</div>
+                        <div className="text-[11px] text-[#c4c9ac] font-semibold">{exercise.muscle[lang]}</div>
                       </div>
                     </div>
-                    <div className="w-10 h-10 rounded-2xl border border-blue-500/40 bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0"><Plus size={18} /></div>
+                    <div className="w-10 h-10 rounded-full border border-[#CCFF00]/40 bg-[#CCFF00]/10 text-[#CCFF00] flex items-center justify-center shrink-0"><Plus size={18} /></div>
                   </button>
                 ))}
               </div>
             </div>
           ))}
-          {groups.length === 0 && <div className="text-center text-slate-500 mt-10 text-sm font-semibold">{t.notFound}</div>}
+          {groups.length === 0 && <div className="text-center text-[#c4c9ac] mt-10 text-sm font-semibold">{t.notFound}</div>}
         </div>
       </div>
     </div>
