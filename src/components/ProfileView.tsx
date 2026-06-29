@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Activity, ArrowRight, Bell, BellOff, Droplets, Dumbbell, Flame, Grid3X3, Layers3, Lock, Medal, Minus, Plus, Ruler, Scale, Settings, Target, Trophy, User, Zap } from 'lucide-react';
+import { useMemo, useState, type ReactNode } from 'react';
+import { ArrowRight, Droplets, Dumbbell, Flame, Grid3X3, Layers3, Lock, Minus, Plus, Ruler, Settings, Target, Trophy, User, Zap } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
 export function ProfileView({ onBack }: { onBack: () => void }) {
@@ -10,7 +10,6 @@ export function ProfileView({ onBack }: { onBack: () => void }) {
   const [endTime, setEndTime] = useState('22:00');
 
   const totalWorkouts = workouts.length;
-  const completedSets = workouts.reduce((total, workout) => total + workout.exercises.reduce((exerciseTotal, exercise) => exerciseTotal + exercise.sets.filter(set => set.completed).length, 0), 0);
   const totalMinutes = workouts.reduce((total, workout) => total + (workout.endTime ? Math.round((workout.endTime - workout.startTime) / 60000) : 0), 0);
   const totalHours = Math.round(totalMinutes / 60);
   const currentStreak = useMemo(() => calculateStreak(workouts.map(workout => workout.startTime)), [workouts]);
@@ -85,7 +84,7 @@ export function ProfileView({ onBack }: { onBack: () => void }) {
           <div className="flex items-center justify-between mt-3">
             <div className="flex gap-1">
               {Array.from({ length: Math.min(waterGoal, 12) }).map((_, index) => (
-                <Droplets key={index} size={16} className={index < hydrationToday ? 'text-[#0070F3]' : 'text-[#d9dec9]'} fill={index < hydrationToday ? 'none' : 'none'} />
+                <Droplets key={index} size={16} className={index < hydrationToday ? 'text-[#0070F3]' : 'text-[#d9dec9]'} />
               ))}
             </div>
             <span className="text-[#bdc1a7] text-sm">{waterPercent}% Tamamlandı</span>
@@ -192,7 +191,7 @@ function ReminderButton({ children, active, lime = false, onClick }: { children:
   return <button onClick={onClick} className={active ? `rounded-[4px] px-2 py-2 text-xs border ${lime ? 'bg-[#f4ffe1] border-[#CCFF00] text-[#CCFF00]' : 'bg-[#1C1C1E] border-[#1C1C1E] text-white'}` : 'rounded-[4px] px-2 py-2 text-xs bg-[#1C1C1E] border border-[#1C1C1E] text-white'}>{children}</button>;
 }
 
-function ActivityCard({ icon, title, meta, color }: { icon: React.ReactNode; title: string; meta: string; color: 'blue' | 'lime' }) {
+function ActivityCard({ icon, title, meta, color }: { icon: ReactNode; title: string; meta: string; color: 'blue' | 'lime' }) {
   return (
     <div className="bg-[#1C1C1E] text-white rounded-[6px] p-4 flex items-center gap-4 border border-black/10">
       <div className={`w-11 h-11 rounded-full border flex items-center justify-center ${color === 'blue' ? 'text-[#0070F3] border-[#0070F3]/25' : 'text-[#CCFF00] border-[#CCFF00]/25'}`}>{icon}</div>
@@ -202,15 +201,15 @@ function ActivityCard({ icon, title, meta, color }: { icon: React.ReactNode; tit
   );
 }
 
-function Badge({ icon, label, active = false, color = 'neutral' }: { icon: React.ReactNode; label: string; active?: boolean; color?: 'lime' | 'orange' | 'neutral' }) {
+function Badge({ icon, label, active = false, color = 'neutral' }: { icon: ReactNode; label: string; active?: boolean; color?: 'lime' | 'orange' | 'neutral' }) {
   const colorClass = color === 'lime' ? 'border-[#CCFF00] text-[#CCFF00] shadow-[0_0_16px_rgba(204,255,0,0.35)]' : color === 'orange' ? 'border-[#FF4D00] text-[#FF4D00]' : 'border-[#9f9f9f] text-white/80 bg-[#9f9f9f]';
   return <div className={`flex flex-col items-center gap-2 ${active ? '' : 'opacity-70'}`}><div className={`w-16 h-16 rounded-full bg-[#1C1C1E] border-2 flex items-center justify-center ${colorClass}`}>{icon}</div><span className="text-xs text-[#d8dcc8]">{label}</span></div>;
 }
 
-function SecondaryRow({ icon, label }: { icon: React.ReactNode; label: string }) {
+function SecondaryRow({ icon, label }: { icon: ReactNode; label: string }) {
   return <button className="w-full py-4 flex items-center justify-between text-[#bdc1a7]"><span className="flex items-center gap-3 text-sm">{icon}{label}</span><ArrowRight size={17} /></button>;
 }
 
-function BottomItem({ icon, label, active = false, onClick }: { icon: React.ReactNode; label: string; active?: boolean; onClick?: () => void }) {
+function BottomItem({ icon, label, active = false, onClick }: { icon: ReactNode; label: string; active?: boolean; onClick?: () => void }) {
   return <button onClick={onClick} className={`flex flex-col items-center gap-1 ${active ? 'text-[#CCFF00]' : 'text-white/75'}`}>{icon}<span>{label}</span></button>;
 }
