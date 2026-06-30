@@ -79,6 +79,12 @@ Logout is handled with a POST route at `/auth/logout`.
 
 `/routines/new` is the first real routine write flow. It reads the exercise catalog from Supabase, validates form input with Zod, then writes one routine and one routine exercise. This lets the dashboard routine list populate from real user-owned data.
 
+## CI quality gate
+
+`.github/workflows/web-ci.yml` runs on web and Supabase changes. It installs dependencies in `apps/web`, runs strict TypeScript typecheck and builds the Next.js app.
+
+Tests are not required yet because the test config and first test suite still need to be completed.
+
 ## Migration principle
 
 Do not copy the old MVP component tree directly. Migrate feature by feature:
