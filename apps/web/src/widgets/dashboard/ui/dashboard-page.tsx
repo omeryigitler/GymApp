@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Activity, Dumbbell, ShieldCheck, Zap } from "lucide-react";
 
 const foundationCards = [
@@ -31,6 +32,14 @@ export function DashboardPage() {
         <p style={{ color: "var(--muted)", fontSize: 16, lineHeight: 1.6 }}>
           This branch keeps the original Vite MVP as a reference and starts a scalable Next.js architecture for the real product.
         </p>
+        <div style={{ display: "flex", gap: 10, marginTop: 18, flexWrap: "wrap" }}>
+          <Link href="/auth" style={{ borderRadius: 999, background: "var(--lime)", color: "#131313", fontWeight: 900, padding: "12px 16px" }}>
+            Start auth flow
+          </Link>
+          <Link href="/dashboard" style={{ borderRadius: 999, border: "1px solid rgba(255,255,255,0.14)", color: "white", fontWeight: 900, padding: "12px 16px" }}>
+            Open dashboard
+          </Link>
+        </div>
       </section>
 
       <section className="card" style={{ marginBottom: 16 }}>
