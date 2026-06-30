@@ -9,10 +9,10 @@ export default function AuthCallbackPage() {
             Auth Callback
           </p>
           <h1 style={{ color: "white", fontSize: 32, lineHeight: 1.1, margin: "12px 0", letterSpacing: -2 }}>
-            Hesap bağlantısı tamamlandı.
+            Giriş işlemi yönlendiriliyor.
           </h1>
           <p style={{ color: "var(--muted)", lineHeight: 1.6 }}>
-            Bir sonraki patch bu route içinde oturum doğrulama ve profil oluşturma işlemlerini tamamlayacak.
+            Bu path normalde route handler tarafından işlenir ve başarılı girişten sonra dashboard ekranına yönlendirilir.
           </p>
         </section>
       </main>
