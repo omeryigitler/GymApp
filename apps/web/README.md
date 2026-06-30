@@ -18,11 +18,11 @@ The codebase follows a feature-oriented structure inspired by Feature-Sliced Des
 
 ```txt
 src/
-  app/                 # Next.js app router, providers and route entrypoints
-  shared/              # shared config, database types, query client, Supabase client
-  entities/            # domain models such as user, workout and routine
-  features/            # business use cases such as auth and workout saving
-  widgets/             # composed product sections such as dashboard and product shell
+  app/
+  shared/
+  entities/
+  features/
+  widgets/
 ```
 
 ## Local setup
@@ -60,10 +60,10 @@ The first migration creates profiles, exercises, routines, workouts, workout set
 The first real auth implementation uses passwordless email links:
 
 ```txt
-/auth -> request email link -> /auth/callback
+/auth -> request email link -> /auth/callback -> session exchange -> /dashboard
 ```
 
-The next patch should complete session exchange and redirect the user into the authenticated dashboard.
+The callback route exchanges the Supabase code for a session, verifies the user, bootstraps the profile row and redirects to the protected dashboard. Middleware refreshes Supabase cookies for `/auth` and `/dashboard` routes.
 
 ## Migration principle
 
