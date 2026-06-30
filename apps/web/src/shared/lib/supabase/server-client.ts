@@ -2,8 +2,13 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { Database } from "@/shared/types/database";
 
+type CookieStore = {
+  getAll(): { name: string; value: string }[];
+  set(name: string, value: string, options?: unknown): void;
+};
+
 export async function createSupabaseServerClient() {
-  const cookieStore = await cookies();
+  const cookieStore = (await cookies()) as unknown as CookieStore;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
