@@ -12,6 +12,29 @@ function optionalNumber(value: FormDataEntryValue | null) {
   return Number(value);
 }
 
+function optionalString(value: FormDataEntryValue | null) {
+  if (typeof value !== "string" || value.trim() === "") {
+    return null;
+  }
+
+  return value;
+}
+
+function readSet(formData: FormData, position: number) {
+  const reps = optionalString(formData.get(`set${position}Reps`));
+
+  if (!reps) {
+    return null;
+  }
+
+  return {
+    position,
+    weightKg: optionalNumber(formData.get(`set${position}WeightKg`)),
+    reps,
+    rpe: optionalNumber(formData.get(`set${position}Rpe`))
+  };
+}
+
 export async function createQuickWorkoutAction(formData: FormData) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.getUser();
@@ -20,12 +43,15 @@ export async function createQuickWorkoutAction(formData: FormData) {
     redirect("/auth");
   }
 
+  const sets = [1, 2, 3]
+    .map(position => readSet(formData, position))
+    .filter((set): set is NonNullable<ReturnType<typeof readSet>> => set !== null);
+
   const input = quickWorkoutSchema.parse({
     name: formData.get("name"),
     exerciseId: formData.get("exerciseId"),
-    weightKg: optionalNumber(formData.get("weightKg")),
-    reps: formData.get("reps"),
-    rpe: optionalNumber(formData.get("rpe")),
+    restSeconds: formData.get("restSeconds") ?? 90,
+    sets,
     notes: formData.get("notes")
   });
 
@@ -54,7 +80,7 @@ export async function createQuickWorkoutAction(formData: FormData) {
       workout_id: workout.id,
       exercise_id: input.exerciseId,
       position: 1,
-      rest_seconds: 90
+      rest_seconds: input.restSeconds
     })
     .select("id")
     .single();
@@ -64,15 +90,17 @@ export async function createQuickWorkoutAction(formData: FormData) {
     throw new Error(exerciseError.message);
   }
 
-  const { error: setError } = await supabase.from("workout_sets").insert({
+  const setRows = input.sets.map(set => ({
     workout_exercise_id: workoutExercise.id,
-    position: 1,
-    weight_kg: input.weightKg,
-    reps: input.reps,
-    rpe: input.rpe,
+    position: set.position,
+    weight_kg: set.weightKg,
+    reps: set.reps,
+    rpe: set.rpe,
     completed: true,
-    set_type: "normal"
-  });
+    set_type: "normal" as const
+  }));
+
+  const { error: setError } = await supabase.from("workout_sets").insert(setRows);
 
   if (setError) {
     await supabase.from("workouts").delete().eq("id", workout.id);
