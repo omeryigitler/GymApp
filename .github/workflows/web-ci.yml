@@ -1,8 +1,5 @@
 name: Web CI
 
-permissions:
-  contents: write
-
 on:
   pull_request:
     paths:
@@ -41,29 +38,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund --silent
-
-      - name: Commit generated package lock
-        if: github.event_name == 'push' && github.ref == 'refs/heads/v2-product-foundation'
-        working-directory: .
-        run: |
-          if ! git diff --quiet -- apps/web/package-lock.json; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add apps/web/package-lock.json
-            git commit -m "chore(v2): add web package lock"
-            git push origin HEAD:v2-product-foundation
-          fi
-
-      - name: Upload generated package lock
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-package-lock
-          path: apps/web/package-lock.json
-          if-no-files-found: ignore
+        run: npm ci --no-audit --no-fund --silent
 
       - name: Typecheck
         run: npm run typecheck -- --pretty false 2>&1 | tee typecheck.log
