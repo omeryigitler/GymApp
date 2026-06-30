@@ -30,7 +30,7 @@ src/
 ```bash
 cd apps/web
 cp .env.example .env.local
-npm install
+npm ci
 npm run dev
 ```
 
@@ -71,9 +71,9 @@ The callback route exchanges the Supabase code for a session, verifies the user,
 
 Logout is handled with a POST route at `/auth/logout`.
 
-## Quick workout save flow
+## Workout save flow
 
-`/workouts/new` is the first real write flow. It reads the exercise catalog from Supabase, validates form input with Zod, then writes one workout, one workout exercise and one completed workout set. This is intentionally narrow so the database write loop is correct before migrating the full MVP workout builder.
+`/workouts/new` reads the exercise catalog from Supabase, validates form input with Zod, then writes one workout, one workout exercise and up to three completed workout sets. The first set is required; the second and third sets are optional. This keeps the flow small while moving beyond the original single-set prototype.
 
 ## Quick routine save flow
 
@@ -81,9 +81,7 @@ Logout is handled with a POST route at `/auth/logout`.
 
 ## CI quality gate
 
-`.github/workflows/web-ci.yml` runs on web and Supabase changes. It installs dependencies in `apps/web`, runs strict TypeScript typecheck and builds the Next.js app.
-
-Tests are not required yet because the test config and first test suite still need to be completed.
+`.github/workflows/web-ci.yml` runs on web and Supabase changes. It installs dependencies in `apps/web` with `npm ci`, runs strict TypeScript typecheck, runs Vitest validation tests and builds the Next.js app.
 
 ## Migration principle
 
