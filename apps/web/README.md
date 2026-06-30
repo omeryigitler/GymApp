@@ -63,7 +63,7 @@ The first real auth implementation uses passwordless email links:
 /auth -> request email link -> /auth/callback -> session exchange -> /dashboard
 ```
 
-The callback route exchanges the Supabase code for a session, verifies the user, bootstraps the profile row and redirects to the protected dashboard. Middleware refreshes Supabase cookies for `/auth`, `/dashboard` and `/workouts` routes.
+The callback route exchanges the Supabase code for a session, verifies the user, bootstraps the profile row and redirects to the protected dashboard. Middleware refreshes Supabase cookies for `/auth`, `/dashboard`, `/workouts` and `/routines` routes.
 
 ## Dashboard data loop
 
@@ -74,6 +74,10 @@ Logout is handled with a POST route at `/auth/logout`.
 ## Quick workout save flow
 
 `/workouts/new` is the first real write flow. It reads the exercise catalog from Supabase, validates form input with Zod, then writes one workout, one workout exercise and one completed workout set. This is intentionally narrow so the database write loop is correct before migrating the full MVP workout builder.
+
+## Quick routine save flow
+
+`/routines/new` is the first real routine write flow. It reads the exercise catalog from Supabase, validates form input with Zod, then writes one routine and one routine exercise. This lets the dashboard routine list populate from real user-owned data.
 
 ## Migration principle
 
