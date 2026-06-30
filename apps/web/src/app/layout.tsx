@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import "./globals.css";
 import { AppProviders } from "./providers";
 
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
   description: "Product-grade workout tracking platform."
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="tr">
       <body>
