@@ -65,6 +65,12 @@ The first real auth implementation uses passwordless email links:
 
 The callback route exchanges the Supabase code for a session, verifies the user, bootstraps the profile row and redirects to the protected dashboard. Middleware refreshes Supabase cookies for `/auth` and `/dashboard` routes.
 
+## Dashboard data loop
+
+`/dashboard` is protected. It reads the current Supabase user, loads the RLS-protected profile row, then queries recent workouts and routines from Supabase. If no data exists yet, it shows honest empty states instead of fake demo activity.
+
+Logout is handled with a POST route at `/auth/logout`.
+
 ## Migration principle
 
 Do not copy the old MVP component tree directly. Migrate feature by feature:
