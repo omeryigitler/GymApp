@@ -11,13 +11,11 @@ function formatDate(value: string) {
 }
 
 function EmptyState({ title, description }: { title: string; description: string }) {
-  return (
-    <div style={{ border: "1px dashed rgba(255,255,255,0.16)", borderRadius: 18, padding: 16 }}>
-      <h3 style={{ color: "white", margin: 0, fontSize: 16 }}>{title}</h3>
-      <p style={{ color: "var(--muted)", margin: "8px 0 0", lineHeight: 1.5, fontSize: 14 }}>{description}</p>
-    </div>
-  );
+  return <div style={{ border: "1px dashed rgba(255,255,255,0.16)", borderRadius: 18, padding: 16 }}><h3 style={{ color: "white", margin: 0, fontSize: 16 }}>{title}</h3><p style={{ color: "var(--muted)", margin: "8px 0 0", lineHeight: 1.5, fontSize: 14 }}>{description}</p></div>;
 }
+
+const ctaStyle = { display: "inline-block", marginTop: 10, borderRadius: 999, background: "var(--lime)", color: "#131313", fontWeight: 900, padding: "12px 16px" } as const;
+const secondaryCtaStyle = { display: "inline-block", marginTop: 10, borderRadius: 999, border: "1px solid rgba(255,255,255,0.14)", color: "white", fontWeight: 900, padding: "12px 16px" } as const;
 
 export default async function DashboardRoute() {
   const supabase = await createSupabaseServerClient();
@@ -47,7 +45,10 @@ export default async function DashboardRoute() {
             </form>
           </div>
           <p style={{ color: "var(--muted)", lineHeight: 1.6 }}>This screen uses Supabase session, profile and user-owned tables.</p>
-          <Link href="/workouts/new" style={{ display: "inline-block", marginTop: 10, borderRadius: 999, background: "var(--lime)", color: "#131313", fontWeight: 900, padding: "12px 16px" }}>Log workout</Link>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <Link href="/workouts/new" style={ctaStyle}>Log workout</Link>
+            <Link href="/routines/new" style={secondaryCtaStyle}>Create routine</Link>
+          </div>
         </section>
 
         <section className="card">
@@ -60,16 +61,12 @@ export default async function DashboardRoute() {
 
         <section className="card">
           <h2 style={{ color: "white", marginTop: 0 }}>Recent workouts</h2>
-          {workouts.length === 0 ? <EmptyState title="No workouts yet" description="Log your first workout to see real Supabase data here." /> : (
-            <div style={{ display: "grid", gap: 10 }}>{workouts.map(workout => <article key={workout.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: 10 }}><h3 style={{ color: "white", margin: 0, fontSize: 16 }}>{workout.name}</h3><p style={{ color: "var(--muted)", margin: "4px 0 0", fontSize: 13 }}>{formatDate(workout.started_at)}</p></article>)}</div>
-          )}
+          {workouts.length === 0 ? <EmptyState title="No workouts yet" description="Log your first workout to see real Supabase data here." /> : <div style={{ display: "grid", gap: 10 }}>{workouts.map(workout => <article key={workout.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: 10 }}><h3 style={{ color: "white", margin: 0, fontSize: 16 }}>{workout.name}</h3><p style={{ color: "var(--muted)", margin: "4px 0 0", fontSize: 13 }}>{formatDate(workout.started_at)}</p></article>)}</div>}
         </section>
 
         <section className="card">
           <h2 style={{ color: "white", marginTop: 0 }}>Routines</h2>
-          {routines.length === 0 ? <EmptyState title="No routines yet" description="Routine creation will be migrated after the workout save flow." /> : (
-            <div style={{ display: "grid", gap: 10 }}>{routines.map(routine => <article key={routine.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: 10 }}><h3 style={{ color: "white", margin: 0, fontSize: 16 }}>{routine.name}</h3><p style={{ color: "var(--muted)", margin: "4px 0 0", fontSize: 13 }}>Updated: {formatDate(routine.updated_at)}</p></article>)}</div>
-          )}
+          {routines.length === 0 ? <EmptyState title="No routines yet" description="Create your first routine to see real Supabase data here." /> : <div style={{ display: "grid", gap: 10 }}>{routines.map(routine => <article key={routine.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: 10 }}><h3 style={{ color: "white", margin: 0, fontSize: 16 }}>{routine.name}</h3><p style={{ color: "var(--muted)", margin: "4px 0 0", fontSize: 13 }}>Updated: {formatDate(routine.updated_at)}</p></article>)}</div>}
         </section>
       </main>
     </ProductShell>
