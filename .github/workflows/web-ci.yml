@@ -55,6 +55,17 @@ jobs:
           path: apps/web/typecheck.log
           if-no-files-found: ignore
 
+      - name: Test
+        run: npm test -- --reporter=verbose 2>&1 | tee test.log
+
+      - name: Upload test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-test-log
+          path: apps/web/test.log
+          if-no-files-found: ignore
+
       - name: Build
         run: npm run build 2>&1 | tee build.log
 
