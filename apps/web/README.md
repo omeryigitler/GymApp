@@ -45,7 +45,25 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-Database tables and row-level security policies should be added before replacing the MVP localStorage flows.
+Apply the database foundation from the repository root:
+
+```bash
+supabase link --project-ref <project-ref>
+supabase db push
+supabase db seed
+```
+
+The first migration creates profiles, exercises, routines, workouts, workout sets, measurements and water logs with row-level security. The profile bootstrap migration creates a profile row when a Supabase Auth user is created.
+
+## Auth flow
+
+The first real auth implementation uses passwordless email links:
+
+```txt
+/auth -> request email link -> /auth/callback
+```
+
+The next patch should complete session exchange and redirect the user into the authenticated dashboard.
 
 ## Migration principle
 
