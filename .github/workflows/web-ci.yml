@@ -40,10 +40,26 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --no-audit --no-fund --silent
 
       - name: Typecheck
-        run: npm run typecheck
+        run: npm run typecheck -- --pretty false 2>&1 | tee typecheck.log
+
+      - name: Upload typecheck log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-typecheck-log
+          path: apps/web/typecheck.log
+          if-no-files-found: ignore
 
       - name: Build
-        run: npm run build
+        run: npm run build 2>&1 | tee build.log
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build-log
+          path: apps/web/build.log
+          if-no-files-found: ignore
