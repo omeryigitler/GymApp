@@ -10,8 +10,16 @@ function formatDate(value: string) {
   return new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(value));
 }
 
+function formatVolume(value: number) {
+  return new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 1 }).format(value);
+}
+
 function EmptyState({ title, description }: { title: string; description: string }) {
   return <div style={{ border: "1px dashed rgba(255,255,255,0.16)", borderRadius: 18, padding: 16 }}><h3 style={{ color: "white", margin: 0, fontSize: 16 }}>{title}</h3><p style={{ color: "var(--muted)", margin: "8px 0 0", lineHeight: 1.5, fontSize: 14 }}>{description}</p></div>;
+}
+
+function MetricBadge({ label, value }: { label: string; value: string }) {
+  return <div style={{ border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, padding: "10px 12px", background: "rgba(255,255,255,0.03)" }}><p style={{ color: "var(--muted)", fontSize: 11, margin: 0, textTransform: "uppercase", fontWeight: 900 }}>{label}</p><p style={{ color: "white", margin: "4px 0 0", fontWeight: 900 }}>{value}</p></div>;
 }
 
 const ctaStyle = { display: "inline-block", marginTop: 10, borderRadius: 999, background: "var(--lime)", color: "#131313", fontWeight: 900, padding: "12px 16px" } as const;
@@ -61,7 +69,7 @@ export default async function DashboardRoute() {
 
         <section className="card">
           <h2 style={{ color: "white", marginTop: 0 }}>Recent workouts</h2>
-          {workouts.length === 0 ? <EmptyState title="No workouts yet" description="Log your first workout to see real Supabase data here." /> : <div style={{ display: "grid", gap: 10 }}>{workouts.map(workout => <article key={workout.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: 10 }}><h3 style={{ color: "white", margin: 0, fontSize: 16 }}>{workout.name}</h3><p style={{ color: "var(--muted)", margin: "4px 0 0", fontSize: 13 }}>{formatDate(workout.started_at)}</p></article>)}</div>}
+          {workouts.length === 0 ? <EmptyState title="No workouts yet" description="Log your first workout to see real Supabase data here." /> : <div style={{ display: "grid", gap: 14 }}>{workouts.map(workout => <article key={workout.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: 14 }}><div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "baseline" }}><h3 style={{ color: "white", margin: 0, fontSize: 16 }}>{workout.name}</h3><p style={{ color: "var(--muted)", margin: 0, fontSize: 12 }}>{formatDate(workout.started_at)}</p></div><div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginTop: 12 }}><MetricBadge label="Sets" value={`${workout.setCount}`} /><MetricBadge label="Reps" value={`${workout.totalReps}`} /><MetricBadge label="Volume" value={`${formatVolume(workout.volumeKg)} kg`} /></div>{workout.notes ? <p style={{ color: "var(--muted)", margin: "10px 0 0", fontSize: 13, lineHeight: 1.5 }}>{workout.notes}</p> : null}</article>)}</div>}
         </section>
 
         <section className="card">
