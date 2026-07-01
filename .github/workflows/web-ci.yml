@@ -1,0 +1,78 @@
+name: Web CI
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/**"
+      - ".github/workflows/web-ci.yml"
+      - "supabase/**"
+  push:
+    branches:
+      - main
+      - v2-product-foundation
+    paths:
+      - "apps/web/**"
+      - ".github/workflows/web-ci.yml"
+      - "supabase/**"
+
+concurrency:
+  group: web-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web-quality-gate:
+    name: Web quality gate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund --silent
+
+      - name: Typecheck
+        run: npm run typecheck -- --pretty false 2>&1 | tee typecheck.log
+
+      - name: Upload typecheck log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-typecheck-log
+          path: apps/web/typecheck.log
+          if-no-files-found: ignore
+
+      - name: Test
+        run: npm test -- --reporter=verbose 2>&1 | tee test.log
+
+      - name: Upload test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-test-log
+          path: apps/web/test.log
+          if-no-files-found: ignore
+
+      - name: Build
+        run: npm run build 2>&1 | tee build.log
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build-log
+          path: apps/web/build.log
+          if-no-files-found: ignore
