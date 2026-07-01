@@ -74,7 +74,7 @@ export default async function DashboardRoute() {
 
         <section className="card">
           <h2 style={{ color: "white", marginTop: 0 }}>Routines</h2>
-          {routines.length === 0 ? <EmptyState title="No routines yet" description="Create your first routine to see real Supabase data here." /> : <div style={{ display: "grid", gap: 10 }}>{routines.map(routine => <article key={routine.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: 10 }}><h3 style={{ color: "white", margin: 0, fontSize: 16 }}>{routine.name}</h3><p style={{ color: "var(--muted)", margin: "4px 0 0", fontSize: 13 }}>Updated: {formatDate(routine.updated_at)}</p></article>)}</div>}
+          {routines.length === 0 ? <EmptyState title="No routines yet" description="Create your first routine to see real Supabase data here." /> : <div style={{ display: "grid", gap: 10 }}>{routines.map(routine => <Link key={routine.id} href={`/routines/${routine.id}`} style={{ display: "block", textDecoration: "none", borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: 10 }}><article><h3 style={{ color: "white", margin: 0, fontSize: 16 }}>{routine.name}</h3><p style={{ color: "var(--muted)", margin: "4px 0 0", fontSize: 13 }}>Updated: {formatDate(routine.updated_at)}</p><p style={{ color: "var(--lime)", margin: "10px 0 0", fontSize: 12, fontWeight: 900 }}>View routine</p></article></Link>)}</div>}
         </section>
       </main>
     </ProductShell>
